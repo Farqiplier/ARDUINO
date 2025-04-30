@@ -1,14 +1,14 @@
 import serial
 import time
 
-def calculate_motor_speed(temp, hum):
+def calculate_motor_speed(temp):
     # Eenvoudige formule (pas aan naar wens)
-    if temp > 30:
+    if temp < 20:
+        return 0
+    elif temp > 30:
         return 255
-    elif temp > 20:
-        return 150
     else:
-        return 50
+        return int((temp - 20) * (255 / 10))
 
 if __name__ == '__main__':
     ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
@@ -26,7 +26,7 @@ if __name__ == '__main__':
                     hum = float(hum_str)
 
                     # Bepaal motorsnelheid op basis van temp/hum
-                    speed = calculate_motor_speed(temp, hum)
+                    speed = calculate_motor_speed(temp)
                     print(f"Temp: {temp}°C, Luchtvochtigheid: {hum}%, Motor Snelheid: {speed}")
 
                     # Stuur snelheid naar Arduino
